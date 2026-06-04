@@ -24,6 +24,27 @@
     <!-- Lucide Icons for premium developer aesthetic -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Global logo fallback handlers declared early to prevent ReferenceError during early image load failures -->
+    <script>
+        function showLogoFallback() {
+            const lightLogo = document.getElementById('logo-light');
+            const darkLogo = document.getElementById('logo-dark');
+            const fallbackElement = document.getElementById('logo-fallback');
+            
+            if (lightLogo) lightLogo.style.display = 'none';
+            if (darkLogo) darkLogo.style.display = 'none';
+            if (fallbackElement) fallbackElement.classList.remove('hidden');
+        }
+
+        function showFooterLogoFallback() {
+            const footerImg = document.getElementById('footer-logo');
+            const footerFallback = document.getElementById('footer-logo-fallback');
+            
+            if (footerImg) footerImg.style.display = 'none';
+            if (footerFallback) footerFallback.classList.remove('hidden');
+        }
+    </script>
+
     <!-- Configure Tailwind theme mapping and variables -->
     <script>
         tailwind.config = {
@@ -90,6 +111,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-[#0F172A] text-[#0F172A] dark:text-slate-100 font-sans transition-colors duration-300 overflow-x-hidden min-h-screen flex flex-col">
 
+    <!-- Preloader Layout -->
     <div id="preloader" class="fixed inset-0 z-[100] bg-[#0F172A] flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="relative w-24 h-24 mb-6">
             <div class="absolute inset-0 rounded-full border-4 border-brand-blue/30 animate-pulse"></div>
@@ -99,13 +121,32 @@
         <p class="text-xs text-slate-400 mt-2">Initializing Spatial Engine...</p>
     </div>
 
+    <!-- Failsafe Preloader Dismiss Timer -->
+    <script>
+        setTimeout(function() {
+            var preloader = document.getElementById('preloader');
+            if (preloader && preloader.style.display !== 'none') {
+                preloader.style.opacity = '0';
+                setTimeout(function() {
+                    preloader.style.display = 'none';
+                }, 500);
+            }
+        }, 800);
+    </script>
+
+    <!-- Background Space Matrix Element (Lidar Simulator Overlay) -->
+    <div class="fixed inset-0 z-0 pointer-events-none opacity-50 dark:opacity-80">
+        <canvas id="lidar-canvas" class="w-full h-full block"></canvas>
+    </div>
+
+    <!-- Navigation Header -->
     <header class="sticky top-0 z-50 transition-all duration-300 glass-panel-light dark:glass-panel border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Brand Logo with Toggleable Assets -->
             <a href="#home" class="flex items-center space-x-3 group relative" onclick="navigateTo('home')">
                 <div id="brand-logo-container" class="flex items-center">
                     <!-- Light Logo Visible on Light Theme -->
-                    <img id="logo-light" src="E BROS_LOGO_250X55PX-01.png" alt="Ebros Spatial Intelligence Logo" class="h-10 w-auto object-contain dark:hidden transition-transform duration-300 group-hover:scale-105" onerror="showLogoFallback()">
+                    <img id="logo-light" src="E BROS_LOGO_250X55PX-01_2.png" alt="Ebros Spatial Intelligence Logo" class="h-10 w-auto object-contain dark:hidden transition-transform duration-300 group-hover:scale-105" onerror="showLogoFallback()">
                     <!-- Dark Logo Visible on Dark Theme -->
                     <img id="logo-dark" src="E BROS_LOGO_250X55PX-02.png" alt="Ebros Spatial Intelligence Logo" class="h-10 w-auto object-contain hidden dark:block transition-transform duration-300 group-hover:scale-105" onerror="showLogoFallback()">
                     
@@ -167,20 +208,14 @@
         </div>
     </header>
 
-    <!-- Background Space Matrix Element (Lidar Simulator Overlay) -->
-    <div class="fixed inset-0 z-0 pointer-events-none opacity-40 dark:opacity-75">
-        <canvas id="lidar-canvas" class="w-full h-full"></canvas>
-    </div>
-
-    <!-- Main Dynamic Page Router Container -->
+    <!-- Main Router Workspace -->
     <main class="flex-grow z-10 relative">
 
+        <!-- ================= HOME PAGE SECTION ================= -->
         <section id="page-home" class="page-view animate-fade">
-            <!-- Hero Workspace -->
+            <!-- Hero Block -->
             <div class="relative overflow-hidden pt-12 pb-20 md:py-32">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                    
-                    <!-- Hero Left Typography Block -->
                     <div class="lg:col-span-7 space-y-6 text-left relative z-10">
                         <div class="inline-flex items-center space-x-2 bg-brand-blue/10 border border-brand-blue/20 text-brand-blue dark:text-brand-sky px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest font-tech">
                             <span class="flex h-2 w-2 rounded-full bg-brand-success animate-ping mr-1"></span>
@@ -190,9 +225,8 @@
                             Building Intelligence For <span class="bg-gradient-to-r from-brand-blue via-brand-sky to-brand-success bg-clip-text text-transparent">Physical Spaces</span>
                         </h1>
                         <p class="text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-                            Ebros develops spatial intelligence, high-fidelity Digital Twins, and AI-powered visualization technologies. We transform buildings, industrial infrastructure, and vast environments into actionable digital assets.
+                            Ebros develops spatial intelligence, high-fidelity Digital Twins, and AI-powered visualization technologies that transform buildings, infrastructure, and environments into actionable digital assets.
                         </p>
-                        
                         <div class="flex flex-col sm:flex-row gap-4 pt-4">
                             <a href="#services" class="px-8 py-4 rounded-xl bg-brand-blue text-white font-semibold hover:bg-blue-700 transition duration-300 shadow-xl shadow-brand-blue/20 text-center flex items-center justify-center space-x-2" onclick="navigateTo('services')">
                                 <span>Explore Services</span>
@@ -203,8 +237,6 @@
                                 <span>Schedule Consultation</span>
                             </a>
                         </div>
-
-                        <!-- Mini Tech Specs -->
                         <div class="grid grid-cols-3 gap-6 pt-10 border-t border-slate-200 dark:border-slate-800/80">
                             <div>
                                 <h4 class="text-2xl font-bold font-tech text-brand-blue dark:text-brand-sky">3D</h4>
@@ -221,17 +253,13 @@
                         </div>
                     </div>
 
-                    <!-- Hero Right Animated Premium Device Graphic -->
                     <div class="lg:col-span-5 relative mt-8 lg:mt-0">
                         <div class="relative mx-auto max-w-[450px] aspect-square rounded-3xl overflow-hidden shadow-2xl border-2 border-slate-200 dark:border-slate-700 glow-accent group">
-                            <!-- Background overlay design representing point cloud mesh -->
                             <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80" 
                                  onerror="this.src='https://placehold.co/800x800/0f172a/38bdf8?text=Spatial+Intelligence+Engine'"
-                                 alt="Futuristic cityscape with digital overlays and spatial sensors" 
+                                 alt="Futuristic cityscape with digital overlays" 
                                  class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
                             <div class="absolute inset-0 bg-gradient-to-t from-brand-deep via-transparent to-transparent"></div>
-                            
-                            <!-- Premium overlay metrics panel -->
                             <div class="absolute bottom-6 left-6 right-6 p-4 glass-panel rounded-xl text-white text-left">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-xs font-tech text-brand-sky uppercase tracking-wider">Spatial Dataset Grid</span>
@@ -252,13 +280,14 @@
                 </div>
             </div>
 
-            <div class="py-20 bg-slate-100 dark:bg-slate-900/50">
+            <!-- What We Do Section -->
+            <div class="py-20 bg-slate-100/90 dark:bg-slate-900/50 backdrop-blur-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="max-w-3xl mx-auto mb-16">
                         <h2 class="text-xs uppercase tracking-widest text-brand-blue dark:text-brand-sky font-tech font-bold mb-3">Enterprise Core Expertise</h2>
                         <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">What We Do</h3>
                         <p class="text-slate-600 dark:text-slate-400 mt-4 text-base">
-                            Transforming raw volumetric spaces into intelligent actionable ecosystems designed to empower critical property decisions, asset tracking, and media visualization.
+                            Transforming physical properties into intelligent virtual realities, designed to empower developers, inspect conditions, and drive pre-sales.
                         </p>
                     </div>
 
@@ -271,7 +300,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Spatial Intelligence</h4>
                             <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
-                                Structuring raw spatial dimensions into multi-layered visual graphs. Capturing dense point clouds and telemetry metadata down to precise millimeter tolerances.
+                                Translating environmental volumes into structured geometric datasets. Capturing dense coordinate files with structural laser scanner accuracy.
                             </p>
                             <span class="text-brand-blue dark:text-brand-sky text-xs font-semibold inline-flex items-center group-hover:underline">
                                 Learn spatial capture <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
@@ -286,7 +315,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Digital Twins</h4>
                             <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
-                                Dynamic replicas of real buildings synchronized to support structural telemetry, simulation pipelines, maintenance scheduling, and remote exploration.
+                                Dynamic rendering of operational systems, properties, and infrastructure integrated directly alongside real-time metrics.
                             </p>
                             <span class="text-brand-blue dark:text-brand-sky text-xs font-semibold inline-flex items-center group-hover:underline">
                                 Explore twin workflows <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
@@ -301,7 +330,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-3">AI Visualization</h4>
                             <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
-                                Leveraging machine vision algorithms for automated texture projection, high-fidelity interior styling synthesis, object taxonomy, and semantic mapping.
+                                Deep learning pipelines built to automatically render interior styles, compose lighting matrices, and segment physical objects.
                             </p>
                             <span class="text-brand-blue dark:text-brand-sky text-xs font-semibold inline-flex items-center group-hover:underline">
                                 View generative visuals <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
@@ -311,11 +340,10 @@
                 </div>
             </div>
 
-            <div class="py-20 bg-slate-50 dark:bg-[#0B1220]">
+            <!-- Edict Veritas Sandbox Section -->
+            <div class="py-20 bg-slate-50/90 dark:bg-[#0B1220]/90 backdrop-blur-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                        
-                        <!-- Left explanation of EDICT VERITAS -->
                         <div class="lg:col-span-5 text-left space-y-6">
                             <span class="font-tech text-xs uppercase tracking-wider text-brand-blue dark:text-brand-sky font-semibold bg-brand-blue/10 px-3 py-1 rounded-full">Flagship Platform</span>
                             <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
@@ -355,7 +383,6 @@
                         <!-- Right Live Interactive Simulation Widget -->
                         <div class="lg:col-span-7">
                             <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-900 text-white shadow-2xl overflow-hidden">
-                                <!-- Interactive Dashboard Header -->
                                 <div class="bg-slate-950 px-6 py-4 flex items-center justify-between border-b border-slate-800">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-3.5 h-3.5 rounded-full bg-brand-blue animate-pulse"></div>
@@ -364,21 +391,17 @@
                                     <span class="text-[10px] bg-slate-800 px-2 py-1 rounded font-mono text-slate-400">Sandbox Viewport</span>
                                 </div>
                                 
-                                <!-- Main Simulator Screen Screen -->
                                 <div class="relative aspect-video bg-slate-950 overflow-hidden group">
-                                    
-                                    <!-- TAB 1 CONTENT: Point Cloud Mesh (Active State Controlled via JS) -->
+                                    <!-- TAB 1 CONTENT: Point Cloud Mesh -->
                                     <div id="demo-tab-1" class="demo-content absolute inset-0 flex items-center justify-center p-4">
                                         <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=800&q=80" alt="Spatial Scan Mesh" class="w-full h-full object-cover opacity-40">
                                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-                                        <!-- Interactive Canvas Simulation Lines overlaid -->
                                         <div class="absolute inset-0 flex flex-col justify-between p-6">
                                             <div class="text-left font-mono text-[10px] text-brand-sky space-y-1">
                                                 <p>> INITIATING SCAN PATH...</p>
                                                 <p>> BOUNDING_BOX: L=42.1m W=28.4m H=11.2m</p>
                                                 <p>> LIDAR RECONSTRUCTION: COMPLETE</p>
                                             </div>
-                                            <!-- Interactive Radar Grid Ring SVG -->
                                             <div class="mx-auto w-32 h-32 border-2 border-brand-sky/20 rounded-full flex items-center justify-center animate-spin relative duration-[15000s]">
                                                 <div class="w-24 h-24 border border-dashed border-brand-blue/40 rounded-full"></div>
                                                 <div class="absolute top-0 w-3 h-3 bg-brand-sky rounded-full"></div>
@@ -390,19 +413,14 @@
                                     <!-- TAB 2 CONTENT: AI Interior Staging with Before/After Slider -->
                                     <div id="demo-tab-2" class="demo-content absolute inset-0 hidden">
                                         <div class="relative w-full h-full flex overflow-hidden">
-                                            <!-- Before State (Unfurnished concrete structure) -->
                                             <div class="absolute inset-0 bg-slate-800">
-                                                <img src="https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=800&q=80" alt="Unfinished building interior" class="w-full h-full object-cover">
-                                                <span class="absolute bottom-4 left-4 bg-red-600/80 px-2.5 py-0.5 text-[10px] font-tech text-white uppercase rounded">Original Shell Capture</span>
+                                                <img src="https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=800&q=80" alt="Unfinished interior" class="w-full h-full object-cover">
+                                                <span class="absolute bottom-4 left-4 bg-red-600/80 px-2.5 py-0.5 text-[10px] font-tech text-white uppercase rounded">Original Shell</span>
                                             </div>
-                                            
-                                            <!-- After State (Beautifully styled CGI apartment office) -->
                                             <div id="staging-after" class="absolute inset-0 bg-slate-900 transition-all duration-300" style="width: 50%;">
                                                 <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=800&q=80" alt="CGI Staged Interior" class="w-full h-full object-cover max-w-none" style="width: 100%; height: 100%;">
-                                                <span class="absolute bottom-4 right-4 bg-brand-success/80 px-2.5 py-0.5 text-[10px] font-tech text-white uppercase rounded whitespace-nowrap">AI Rendered Staging</span>
+                                                <span class="absolute bottom-4 right-4 bg-brand-success/80 px-2.5 py-0.5 text-[10px] font-tech text-white uppercase rounded whitespace-nowrap">AI Staged</span>
                                             </div>
-
-                                            <!-- Interactive slider control -->
                                             <div class="absolute inset-y-0 left-1/2 -ml-0.5 w-1 bg-brand-sky cursor-ew-resize flex items-center justify-center" id="staging-slider-bar" style="left: 50%;">
                                                 <div class="w-8 h-8 rounded-full bg-brand-sky text-slate-950 flex items-center justify-center shadow-lg cursor-pointer">
                                                     <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
@@ -411,39 +429,22 @@
                                         </div>
                                     </div>
 
-                                    <!-- TAB 3 CONTENT: Buyer Analytics Simulation -->
+                                    <!-- TAB 3 CONTENT: Buyer Analytics -->
                                     <div id="demo-tab-3" class="demo-content absolute inset-0 hidden flex flex-col justify-between p-6">
                                         <div class="flex items-center justify-between">
                                             <span class="font-tech text-xs text-brand-sky">PROACTIVE DEMAND METRICS</span>
-                                            <span class="text-xs font-mono text-slate-400">Update Interval: 1s</span>
+                                            <span class="text-xs font-mono text-slate-400">Interval: 1s</span>
                                         </div>
-                                        <!-- Mock Charts Built dynamically using Tailwind grids -->
                                         <div class="h-1/2 flex items-end space-x-4 border-b border-slate-800 pb-1 pt-4">
-                                            <div class="flex-1 bg-brand-blue/30 hover:bg-brand-blue/60 transition h-[35%] rounded relative group">
-                                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-brand-sky opacity-0 group-hover:opacity-100 transition-opacity">35%</span>
-                                            </div>
-                                            <div class="flex-1 bg-brand-blue/30 hover:bg-brand-blue/60 transition h-[55%] rounded relative group">
-                                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-brand-sky opacity-0 group-hover:opacity-100 transition-opacity">55%</span>
-                                            </div>
-                                            <div class="flex-1 bg-brand-sky/40 hover:bg-brand-sky/70 transition h-[85%] rounded relative group">
-                                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-brand-sky opacity-0 group-hover:opacity-100 transition-opacity">85%</span>
-                                            </div>
-                                            <div class="flex-1 bg-brand-success/30 hover:bg-brand-success/60 transition h-[70%] rounded relative group">
-                                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-brand-sky opacity-0 group-hover:opacity-100 transition-opacity">70%</span>
-                                            </div>
-                                            <div class="flex-1 bg-brand-blue/30 hover:bg-brand-blue/60 transition h-[95%] rounded relative group">
-                                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-brand-sky opacity-0 group-hover:opacity-100 transition-opacity">95%</span>
-                                            </div>
-                                        </div>
-                                        <div class="flex justify-between text-[10px] font-tech text-slate-400 pt-1">
-                                            <span>Virtual Tour Swipes</span>
-                                            <span>Staging Customizer Toggles</span>
-                                            <span>In-View Dwell Time</span>
+                                            <div class="flex-1 bg-brand-blue/30 hover:bg-brand-blue/60 transition h-[35%] rounded relative group"></div>
+                                            <div class="flex-1 bg-brand-blue/30 hover:bg-brand-blue/60 transition h-[55%] rounded relative group"></div>
+                                            <div class="flex-1 bg-brand-sky/40 hover:bg-brand-sky/70 transition h-[85%] rounded relative group"></div>
+                                            <div class="flex-1 bg-brand-success/30 hover:bg-brand-success/60 transition h-[70%] rounded relative group"></div>
                                         </div>
                                         <div class="grid grid-cols-2 gap-4 text-left border-t border-slate-900 pt-3">
                                             <div>
                                                 <span class="text-[10px] text-slate-400 uppercase">Avg Engagement Time</span>
-                                                <p class="text-lg font-bold text-brand-success">14m 32s <span class="text-xs text-slate-400 font-normal">+240% vs standard 2D</span></p>
+                                                <p class="text-lg font-bold text-brand-success">14m 32s</p>
                                             </div>
                                             <div>
                                                 <span class="text-[10px] text-slate-400 uppercase">High-Intent Leads</span>
@@ -451,10 +452,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
                                 </div>
 
-                                <!-- Tab Switch Buttons at the bottom of the Widget -->
                                 <div class="bg-slate-950 p-2 grid grid-cols-3 gap-1.5 border-t border-slate-800">
                                     <button onclick="setDemoTab(1)" id="btn-tab-1" class="demo-tab-btn py-2.5 rounded-lg text-xs font-semibold tracking-wider uppercase bg-brand-blue text-white hover:bg-blue-600 transition duration-200">
                                         LiDAR Capture
@@ -468,12 +467,12 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
-            <div class="py-20 bg-slate-100 dark:bg-slate-900/40">
+            <!-- Industries We Serve Section -->
+            <div class="py-20 bg-slate-100/90 dark:bg-slate-900/40 backdrop-blur-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="max-w-3xl mx-auto mb-16">
                         <h2 class="text-xs uppercase tracking-widest text-brand-blue dark:text-brand-sky font-tech font-bold mb-3">Enterprise Alignment</h2>
@@ -484,9 +483,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        
-                        <!-- Industry 1 -->
-                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 hover:border-brand-sky text-left group transition-all duration-300">
+                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800 hover:border-brand-sky text-left group transition-all duration-300">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="p-2.5 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg">
                                     <i data-lucide="building-2" class="w-5 h-5"></i>
@@ -497,9 +494,7 @@
                                 Driving pre-sales and architectural validation using the interactive visual layers of Edict Veritas.
                             </p>
                         </div>
-
-                        <!-- Industry 2 -->
-                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 hover:border-brand-sky text-left group transition-all duration-300">
+                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800 hover:border-brand-sky text-left group transition-all duration-300">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="p-2.5 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg">
                                     <i data-lucide="crane" class="w-5 h-5"></i>
@@ -510,9 +505,7 @@
                                 Tracking actual structure progress tolerances directly against 3D BIM blueprints and site parameters.
                             </p>
                         </div>
-
-                        <!-- Industry 3 -->
-                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 hover:border-brand-sky text-left group transition-all duration-300">
+                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800 hover:border-brand-sky text-left group transition-all duration-300">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="p-2.5 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg">
                                     <i data-lucide="container" class="w-5 h-5"></i>
@@ -523,9 +516,7 @@
                                 Providing asset tracking models for large energy facilities, rail links, ports, and smart grid utilities.
                             </p>
                         </div>
-
-                        <!-- Industry 4 -->
-                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 hover:border-brand-sky text-left group transition-all duration-300">
+                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800 hover:border-brand-sky text-left group transition-all duration-300">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="p-2.5 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg">
                                     <i data-lucide="sofa" class="w-5 h-5"></i>
@@ -536,9 +527,7 @@
                                 Harnessing automated artificial room rendering to prototype environments in high fidelity with physical space.
                             </p>
                         </div>
-
-                        <!-- Industry 5 -->
-                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 hover:border-brand-sky text-left group transition-all duration-300">
+                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800 hover:border-brand-sky text-left group transition-all duration-300">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="p-2.5 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg">
                                     <i data-lucide="film" class="w-5 h-5"></i>
@@ -549,9 +538,7 @@
                                 Designing hyper-accurate virtual visual stages, environmental CGI replacement sets, and production telemetry.
                             </p>
                         </div>
-
-                        <!-- Industry 6 -->
-                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 hover:border-brand-sky text-left group transition-all duration-300">
+                        <div class="p-6 rounded-xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800 hover:border-brand-sky text-left group transition-all duration-300">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="p-2.5 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg">
                                     <i data-lucide="warehouse" class="w-5 h-5"></i>
@@ -562,12 +549,12 @@
                                 Orchestrating unified digital twin layouts of high-occupancy environments, multi-site factories, and retail networks.
                             </p>
                         </div>
-
                     </div>
                 </div>
             </div>
 
-            <div class="py-20 bg-slate-50 dark:bg-[#0F172A] border-t border-slate-200 dark:border-slate-800/60">
+            <!-- Why Ebros Section -->
+            <div class="py-20 bg-slate-50/90 dark:bg-[#0F172A]/90 border-t border-slate-200 dark:border-slate-800/60 backdrop-blur-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center max-w-3xl mx-auto mb-16">
                         <h2 class="text-xs uppercase tracking-widest text-brand-blue dark:text-brand-sky font-tech font-bold mb-3">Enterprise Advantage</h2>
@@ -578,8 +565,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        
-                        <!-- Value 1 -->
                         <div class="flex space-x-4 p-4 text-left">
                             <div class="flex-shrink-0 text-brand-blue dark:text-brand-sky mt-1">
                                 <i data-lucide="shield-check" class="w-6 h-6"></i>
@@ -591,8 +576,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Value 2 -->
                         <div class="flex space-x-4 p-4 text-left">
                             <div class="flex-shrink-0 text-brand-blue dark:text-brand-sky mt-1">
                                 <i data-lucide="satellite-dish" class="w-6 h-6"></i>
@@ -604,8 +587,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Value 3 -->
                         <div class="flex space-x-4 p-4 text-left">
                             <div class="flex-shrink-0 text-brand-blue dark:text-brand-sky mt-1">
                                 <i data-lucide="bot" class="w-6 h-6"></i>
@@ -617,8 +598,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Value 4 -->
                         <div class="flex space-x-4 p-4 text-left">
                             <div class="flex-shrink-0 text-brand-blue dark:text-brand-sky mt-1">
                                 <i data-lucide="network" class="w-6 h-6"></i>
@@ -630,8 +609,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Value 5 -->
                         <div class="flex space-x-4 p-4 text-left">
                             <div class="flex-shrink-0 text-brand-blue dark:text-brand-sky mt-1">
                                 <i data-lucide="sparkles" class="w-6 h-6"></i>
@@ -643,8 +620,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Value 6 -->
                         <div class="flex space-x-4 p-4 text-left">
                             <div class="flex-shrink-0 text-brand-blue dark:text-brand-sky mt-1">
                                 <i data-lucide="award" class="w-6 h-6"></i>
@@ -656,11 +631,11 @@
                                 </p>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
+            <!-- CTA Callout Block -->
             <div class="py-20 bg-slate-900 text-white relative overflow-hidden">
                 <div class="absolute inset-0 bg-cover bg-center opacity-10" style="background-image: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=1200&q=80')"></div>
                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
@@ -681,8 +656,8 @@
             </div>
         </section>
 
+        <!-- ================= ABOUT PAGE SECTION ================= -->
         <section id="page-about" class="page-view animate-fade hidden">
-            <!-- Hero Header -->
             <div class="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left">
                     <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -694,7 +669,6 @@
                 </div>
             </div>
 
-            <!-- Company Narrative Section -->
             <div class="py-20">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div class="lg:col-span-7 space-y-6 text-left">
@@ -705,7 +679,6 @@
                         <p class="text-slate-600 dark:text-slate-400">
                             Recognizing that physical spaces were completely decoupled from modern digital workflows, we leveraged our deep inspection and scanner expertise to build advanced visual spatial software. We expanded our capabilities from forensic analytics to absolute spatial intelligence—building **Edict Veritas**, the core technology platform designed to structure, stage, and simulate complete built environments with precision.
                         </p>
-                        
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6">
                             <div class="p-5 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800">
                                 <h4 class="font-bold text-brand-blue dark:text-brand-sky font-tech text-sm mb-2 uppercase">Our Mission</h4>
@@ -722,7 +695,6 @@
                         </div>
                     </div>
                     
-                    <!-- Side Visual Grid graphic -->
                     <div class="lg:col-span-5 relative">
                         <div class="relative w-full aspect-square rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl group">
                             <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" 
@@ -735,8 +707,8 @@
                 </div>
             </div>
 
-            <!-- Team Board Section -->
-            <div class="py-20 bg-slate-100 dark:bg-slate-900/50">
+            <!-- Team Section -->
+            <div class="py-20 bg-slate-100/90 dark:bg-slate-900/50 backdrop-blur-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="max-w-3xl mx-auto mb-16">
                         <h2 class="text-xs uppercase tracking-widest text-brand-blue dark:text-brand-sky font-tech font-bold mb-3">Architects of Space</h2>
@@ -747,12 +719,12 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <!-- Member 1 -->
+                        <!-- Member 1: Founder -->
                         <div class="p-6 rounded-2xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 text-left">
                             <div class="w-full aspect-[4/3] rounded-xl overflow-hidden mb-5 bg-slate-200 dark:bg-slate-800">
                                 <img src="founder.png" 
                                      onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80'"
-                                     alt="Edison Chacko Varghese - Founder & Director" 
+                                     alt="Edison Chacko Varghese" 
                                      class="w-full h-full object-cover object-top">
                             </div>
                             <h4 class="text-lg font-bold text-slate-900 dark:text-white">Edison Chacko Varghese</h4>
@@ -762,12 +734,12 @@
                             </p>
                         </div>
 
-                        <!-- Member 2 -->
+                        <!-- Member 2: CEO -->
                         <div class="p-6 rounded-2xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 text-left">
                             <div class="w-full aspect-[4/3] rounded-xl overflow-hidden mb-5 bg-slate-200 dark:bg-slate-800">
-                                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80" 
-                                     onerror="this.src='https://placehold.co/400x300/0f172a/38bdf8?text=CEO'"
-                                     alt="Chief Executive Officer" 
+                                <img src="senso.jpeg" 
+                                     onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80'"
+                                     alt="Senso Alias" 
                                      class="w-full h-full object-cover object-top">
                             </div>
                             <h4 class="text-lg font-bold text-slate-900 dark:text-white">Senso Alias</h4>
@@ -777,12 +749,13 @@
                             </p>
                         </div>
 
-                        <!-- Member 3 -->
+                        <!-- Member 3: ML Engineer -->
                         <div class="p-6 rounded-2xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 text-left">
                             <div class="w-full aspect-[4/3] rounded-xl overflow-hidden mb-5 bg-slate-200 dark:bg-slate-800">
-                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" 
-                                     onerror="this.src='https://placehold.co/400x300/0f172a/38bdf8?text=ML+Engineer'"
-                                     alt="ML Engineer" 
+                                <img src="senso.jpeg" 
+                                     onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80'"
+
+                                     alt="Jovin Shaji" 
                                      class="w-full h-full object-cover object-top">
                             </div>
                             <h4 class="text-lg font-bold text-slate-900 dark:text-white">Jovin Shaji</h4>
@@ -792,12 +765,13 @@
                             </p>
                         </div>
 
-                        <!-- Member 4 -->
+                        <!-- Member 4: 3D Visualization Lead -->
                         <div class="p-6 rounded-2xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800/80 text-left">
                             <div class="w-full aspect-[4/3] rounded-xl overflow-hidden mb-5 bg-slate-200 dark:bg-slate-800">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80" 
-                                     onerror="this.src='https://placehold.co/400x300/0f172a/38bdf8?text=3D+Lead'"
-                                     alt="3D Visualization Lead" 
+                                <img src="jackson.jpeg" 
+                                     onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80'"
+
+                                     alt="Jackson Thomas" 
                                      class="w-full h-full object-cover object-top">
                             </div>
                             <h4 class="text-lg font-bold text-slate-900 dark:text-white">Jackson Thomas</h4>
@@ -844,8 +818,8 @@
                 </div>
             </div>
 
-            <!-- Dynamic Values Grid Section -->
-            <div class="py-20 bg-slate-50 dark:bg-[#0B1220]">
+            <!-- Pillars of Action Section -->
+            <div class="py-20 bg-slate-50/90 dark:bg-[#0B1220]/90 backdrop-blur-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="max-w-3xl mx-auto mb-16">
                         <h2 class="text-xs uppercase tracking-widest text-brand-blue dark:text-brand-sky font-tech font-bold mb-3">Our Foundation</h2>
@@ -853,35 +827,30 @@
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-                        <!-- Pill 1 -->
                         <div class="p-6 rounded-xl bg-slate-100 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 flex flex-col items-center">
                             <div class="p-3 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg mb-3">
                                 <i data-lucide="zap" class="w-5 h-5"></i>
                             </div>
                             <span class="text-sm font-semibold">Innovation</span>
                         </div>
-                        <!-- Pill 2 -->
                         <div class="p-6 rounded-xl bg-slate-100 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 flex flex-col items-center">
                             <div class="p-3 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg mb-3">
                                 <i data-lucide="compass" class="w-5 h-5"></i>
                             </div>
                             <span class="text-sm font-semibold">Accuracy</span>
                         </div>
-                        <!-- Pill 3 -->
                         <div class="p-6 rounded-xl bg-slate-100 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 flex flex-col items-center">
                             <div class="p-3 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg mb-3">
                                 <i data-lucide="check-square" class="w-5 h-5"></i>
                             </div>
                             <span class="text-sm font-semibold">Trust</span>
                         </div>
-                        <!-- Pill 4 -->
                         <div class="p-6 rounded-xl bg-slate-100 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 flex flex-col items-center">
                             <div class="p-3 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg mb-3">
                                 <i data-lucide="maximize" class="w-5 h-5"></i>
                             </div>
                             <span class="text-sm font-semibold">Scalability</span>
                         </div>
-                        <!-- Pill 5 -->
                         <div class="p-6 rounded-xl bg-slate-100 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 flex flex-col items-center col-span-2 md:col-span-1 mx-auto w-full">
                             <div class="p-3 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg mb-3">
                                 <i data-lucide="brain" class="w-5 h-5"></i>
@@ -893,8 +862,8 @@
             </div>
         </section>
 
+        <!-- ================= SERVICES PAGE SECTION ================= -->
         <section id="page-services" class="page-view animate-fade hidden">
-            <!-- Hero Header -->
             <div class="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left">
                     <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -906,9 +875,7 @@
                 </div>
             </div>
 
-            <!-- Detailed Services Blocks Grid -->
             <div class="py-20 space-y-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
                 <!-- Service 1: Immersive Sales Engine -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     <div class="lg:col-span-6 text-left space-y-5">
@@ -926,9 +893,9 @@
                         </ul>
                     </div>
                     <div class="lg:col-span-6">
-                        <div class="rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800">
-                            <img src="https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=800&q=80" 
-                                 onerror="this.src='https://placehold.co/800x450/0f172a/38bdf8?text=Immersive+Sales+Platform'"
+                        <div class="rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 bg-slate-100">
+                            <img src="digiexperience.png" 
+                                 onerror="this.src='https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=800&q=80'"
                                  alt="High Tech Digital Sales Dashboard" class="w-full aspect-[16/10] object-cover">
                         </div>
                     </div>
@@ -950,9 +917,9 @@
                         </ul>
                     </div>
                     <div class="lg:col-span-6 lg:order-1">
-                        <div class="rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800">
-                            <img src="https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=800&q=80" 
-                                 onerror="this.src='https://placehold.co/800x450/0f172a/38bdf8?text=Forensic+Inspection'"
+                        <div class="rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 bg-slate-100">
+                            <img src="LIDARinspection.jpeg" 
+                                 onerror="this.src='https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=800&q=80'"
                                  alt="Professional structural thermal building inspect" class="w-full aspect-[16/10] object-cover">
                         </div>
                     </div>
@@ -974,15 +941,30 @@
                         </ul>
                     </div>
                     <div class="lg:col-span-6">
-                        <div class="rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800">
-                            <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=800&q=80" 
-                                 onerror="this.src='https://placehold.co/800x450/0f172a/38bdf8?text=AI+Staging'"
-                                 alt="Computer workstation visualization design screen" class="w-full aspect-[16/10] object-cover">
+                        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-900 text-white shadow-2xl overflow-hidden aspect-[16/10] relative" id="services-page-slider-container">
+                            <div class="relative w-full h-full flex overflow-hidden">
+                                <!-- Before State -->
+                                <div class="absolute inset-0 bg-slate-800">
+                                    <img src="nonrendered.jpeg" onerror="this.src='https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=800&q=80'" alt="Unfinished building interior" class="w-full h-full object-cover">
+                                    <span class="absolute bottom-4 left-4 bg-red-600/80 px-2.5 py-0.5 text-[10px] font-tech text-white uppercase rounded font-bold">Original Shell</span>
+                                </div>
+                                <!-- After State -->
+                                <div id="services-staging-after" class="absolute inset-0 bg-slate-900 transition-all duration-300" style="width: 50%;">
+                                    <img src="rendered.jpg" onerror="this.src='https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=800&q=80'" alt="CGI Staged Interior" class="w-full h-full object-cover max-w-none" style="width: 100%; height: 100%;">
+                                    <span class="absolute bottom-4 right-4 bg-brand-success/80 px-2.5 py-0.5 text-[10px] font-tech text-white uppercase rounded whitespace-nowrap font-bold">AI Rendered Staging</span>
+                                </div>
+                                <!-- Interactive slider handle -->
+                                <div class="absolute inset-y-0 left-1/2 -ml-0.5 w-1 bg-brand-sky cursor-ew-resize flex items-center justify-center" id="services-slider-bar" style="left: 50%;">
+                                    <div class="w-8 h-8 rounded-full bg-brand-sky text-slate-950 flex items-center justify-center shadow-lg cursor-pointer">
+                                        <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Service 4: Visual/CGI Production Studio Details with subtabs -->
+                <!-- Service 4: CGI Visual Production Studio -->
                 <div class="p-8 md:p-12 rounded-3xl bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
                     <div class="text-center max-w-2xl mx-auto mb-10">
                         <div class="text-xs font-tech text-brand-blue dark:text-brand-sky uppercase tracking-widest font-bold mb-2">Service 04</div>
@@ -990,9 +972,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Precision visuals crafted for global presentation assets</p>
                     </div>
 
-                    <!-- Inner Studio Categorized Grid -->
+                    <!-- Studio Grid Categorized Overview -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Studio Cat 1 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 text-left">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-3">Architectural Visualization</h4>
                             <ul class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -1001,8 +982,7 @@
                                 <li>• Volumetric Masterplan Rendering</li>
                             </ul>
                         </div>
-                        <!-- Studio Cat 2 -->
-                        <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 text-left">
+                        <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border-slate-800 text-left">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-3">CGI Asset Development</h4>
                             <ul class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
                                 <li>• Complex Custom 3D Assets</li>
@@ -1010,7 +990,6 @@
                                 <li>• Environments Generation</li>
                             </ul>
                         </div>
-                        <!-- Studio Cat 3 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 text-left">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-3">Film & Media Props</h4>
                             <ul class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -1019,7 +998,6 @@
                                 <li>• Volumetric Virtual Layouts</li>
                             </ul>
                         </div>
-                        <!-- Studio Cat 4 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 text-left">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-3">VFX & Compositing</h4>
                             <ul class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -1028,7 +1006,6 @@
                                 <li>• Digital Background replacement</li>
                             </ul>
                         </div>
-                        <!-- Studio Cat 5 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 text-left">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-3">Animation Studio</h4>
                             <ul class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -1037,7 +1014,6 @@
                                 <li>• Mechanized Process Animation</li>
                             </ul>
                         </div>
-                        <!-- Studio Cat 6 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 text-left">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-3">Immersive Platforms</h4>
                             <ul class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -1046,6 +1022,23 @@
                                 <li>• Multi-touch Interactive Graphics</li>
                             </ul>
                         </div>
+                    </div>
+
+                    <!-- Interactive Volumetric Spin Player Feed Integration -->
+                    <div class="mt-12 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-[#070d19]/90 overflow-hidden text-left shadow-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-2">
+                                <span class="flex h-2 w-2 rounded-full bg-brand-sky animate-pulse"></span>
+                                <h4 class="font-tech text-xs tracking-wider text-brand-sky uppercase font-bold">Interactive Volumetric Simulation Engine Viewport</h4>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">360° OBJECT ROTATION ACTIVE</span>
+                        </div>
+                        <div class="rounded-xl overflow-hidden bg-white dark:bg-slate-950 aspect-video relative shadow-inner border border-slate-300 dark:border-slate-800">
+                            <iframe class="w-full h-full border-0 rounded-xl" src="https://demos.evox.com/SquareSpaceWeb/2027KiatellurideSpin3/57660_ex1024.html?wmode=opaque" allowfullscreen loading="lazy"></iframe>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-3 text-center italic font-sans">
+                            *Click and drag inside the viewport above to interactively spin the calibrated product simulation asset across 3D geometric matrices.
+                        </p>
                     </div>
                 </div>
 
@@ -1065,19 +1058,18 @@
                         </ul>
                     </div>
                     <div class="lg:col-span-6 lg:order-1">
-                        <div class="rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800">
-                            <img src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=800&q=80" 
-                                 onerror="this.src='https://placehold.co/800x450/0f172a/38bdf8?text=Digital+Twin+Systems'"
+                        <div class="rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 bg-slate-100">
+                            <img src="digitaltwin.png" 
+                                 onerror="this.src='https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=800&q=80'"
                                  alt="Enterprise Digital Twin Layout" class="w-full aspect-[16/10] object-cover">
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
+        <!-- ================= VISION PAGE SECTION ================= -->
         <section id="page-vision" class="page-view animate-fade hidden">
-            <!-- Hero Header -->
             <div class="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left">
                     <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -1089,19 +1081,15 @@
                 </div>
             </div>
 
-            <!-- Roadmap Section (Continuous Timeline) -->
+            <!-- Technology Roadmap timeline -->
             <div class="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-xs uppercase tracking-widest text-brand-blue dark:text-brand-sky font-tech font-bold mb-3">Enterprise Milestones</h2>
                     <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">Our Technology Roadmap</h3>
                 </div>
 
-                <!-- Timeline Layout -->
                 <div class="relative border-l border-slate-300 dark:border-slate-800 ml-4 md:ml-32 space-y-12">
-                    
-                    <!-- Milestone 1 -->
                     <div class="relative pl-8 md:pl-12">
-                        <!-- Floating Left Node -->
                         <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-brand-success border-4 border-slate-50 dark:border-[#0F172A]"></div>
                         <div class="absolute -left-32 top-1.5 hidden md:block text-right w-24">
                             <span class="font-tech text-xs text-brand-success font-bold uppercase tracking-wider">Present</span>
@@ -1115,9 +1103,7 @@
                         </div>
                     </div>
 
-                    <!-- Milestone 2 -->
                     <div class="relative pl-8 md:pl-12">
-                        <!-- Floating Left Node -->
                         <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-brand-blue border-4 border-slate-50 dark:border-[#0F172A]"></div>
                         <div class="absolute -left-32 top-1.5 hidden md:block text-right w-24">
                             <span class="font-tech text-xs text-brand-blue font-bold uppercase tracking-wider">Near Future</span>
@@ -1131,9 +1117,7 @@
                         </div>
                     </div>
 
-                    <!-- Milestone 3 -->
                     <div class="relative pl-8 md:pl-12">
-                        <!-- Floating Left Node -->
                         <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-brand-sky border-4 border-slate-50 dark:border-[#0F172A]"></div>
                         <div class="absolute -left-32 top-1.5 hidden md:block text-right w-24">
                             <span class="font-tech text-xs text-brand-sky font-bold uppercase tracking-wider">Future</span>
@@ -1147,9 +1131,7 @@
                         </div>
                     </div>
 
-                    <!-- Milestone 4 -->
                     <div class="relative pl-8 md:pl-12">
-                        <!-- Floating Left Node -->
                         <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-purple-500 border-4 border-slate-50 dark:border-[#0F172A]"></div>
                         <div class="absolute -left-32 top-1.5 hidden md:block text-right w-24">
                             <span class="font-tech text-xs text-purple-400 font-bold uppercase tracking-wider text-glow">Long-Term</span>
@@ -1162,12 +1144,11 @@
                             </p>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- Core Research Vectors Section -->
-            <div class="py-20 bg-slate-100 dark:bg-slate-900/50">
+            <!-- Exploration Domains -->
+            <div class="py-20 bg-slate-100/90 dark:bg-slate-900/50 backdrop-blur-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div class="max-w-2xl mx-auto mb-16">
                         <h2 class="text-xs uppercase tracking-widest text-brand-blue dark:text-brand-sky font-tech font-bold mb-3">Research Lab</h2>
@@ -1176,27 +1157,22 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                        <!-- Res 1 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 text-left space-y-3">
                             <h4 class="font-bold text-sm text-brand-blue dark:text-brand-sky">Spatial Intelligence</h4>
                             <p class="text-xs text-slate-500 leading-relaxed font-sans">Developing optimized geometric algorithms for processing multi-gigabyte spatial meshes with minimal latency.</p>
                         </div>
-                        <!-- Res 2 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 text-left space-y-3">
                             <h4 class="font-bold text-sm text-brand-blue dark:text-brand-sky">Computer Vision</h4>
                             <p class="text-xs text-slate-500 leading-relaxed font-sans">Training machine vision models for precise material segmentation and architectural anomaly detection.</p>
                         </div>
-                        <!-- Res 3 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 text-left space-y-3">
                             <h4 class="font-bold text-sm text-brand-blue dark:text-brand-sky">AI-Assisted Design</h4>
-                            <p class="text-xs text-slate-500 leading-relaxed font-sans font-sans">Automating design composition based on physical geometry parameters and cultural interior styling structures.</p>
+                            <p class="text-xs text-slate-500 leading-relaxed font-sans">Automating design composition based on physical geometry parameters and cultural interior styling structures.</p>
                         </div>
-                        <!-- Res 4 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 text-left space-y-3">
                             <h4 class="font-bold text-sm text-brand-blue dark:text-brand-sky">Digital Twins</h4>
                             <p class="text-xs text-slate-500 leading-relaxed font-sans font-sans">Connecting real physical sensors directly with 3D elements, visualizing long-term fatigue metrics.</p>
                         </div>
-                        <!-- Res 5 -->
                         <div class="p-5 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800/80 text-left space-y-3 col-span-1 md:col-span-3 lg:col-span-1">
                             <h4 class="font-bold text-sm text-brand-blue dark:text-brand-sky">Built Environment</h4>
                             <p class="text-xs text-slate-500 leading-relaxed font-sans">Assessing macro city telemetry to map predictive energy demands and improve disaster preparedness response.</p>
@@ -1206,8 +1182,8 @@
             </div>
         </section>
 
+        <!-- ================= CONTACT PAGE SECTION ================= -->
         <section id="page-contact" class="page-view animate-fade hidden">
-            <!-- Hero Header -->
             <div class="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left">
                     <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -1219,18 +1195,15 @@
                 </div>
             </div>
 
-            <!-- Contact Form Workspace -->
             <div class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 text-left">
-                    
-                    <!-- Left Contact Info Details Card -->
                     <div class="lg:col-span-5 space-y-8">
                         <div>
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 font-sans">EBROS FORENSIC & SPATIAL INTELLIGENCE PVT LTD</h3>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">EBROS FORENSIC & SPATIAL INTELLIGENCE PVT LTD</h3>
                             <p class="text-sm text-slate-500">Corporate Head Office</p>
                         </div>
 
-                        <!-- Core Contacts -->
+                        <!-- Core Contact Details -->
                         <div class="space-y-4">
                             <div class="flex items-center space-x-3.5">
                                 <div class="p-2.5 bg-brand-blue/10 text-brand-blue dark:text-brand-sky rounded-lg">
@@ -1263,12 +1236,11 @@
                             </div>
                         </div>
 
-                        <!-- Styled Kochi Kerala Placeholder map with modern responsive dimensions -->
+                        <!-- Google Maps Frame -->
                         <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-lg aspect-video relative group bg-slate-900">
-                            <!-- High quality maps mockup -->
                             <iframe 
                                 class="w-full h-full border-0 opacity-85 group-hover:opacity-100 transition-opacity" 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125766.19566938446!2d76.22019484838641!3d9.982352840552718!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d514abecdb9%3A0x7d7715807185aa!2sKochi%2C%20Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d251482.3871842323!2d76.16084620029517!3d9.981635835260195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d514abec6bf%3A0xbd582ca573002c81!2sKochi%2C%20Kerala!5e0!3m2!1sen!2sin!4v1717520000000!5m2!1sen!2sin" 
                                 allowfullscreen="" 
                                 loading="lazy" 
                                 referrerpolicy="no-referrer-when-downgrade">
@@ -1280,21 +1252,21 @@
                         </div>
                     </div>
 
-                    <!-- Right Active Validation Form -->
+                    <!-- Contact Form Card -->
                     <div class="lg:col-span-7">
                         <div class="p-8 rounded-2xl glass-panel-light dark:glass-panel border border-slate-200 dark:border-slate-800 shadow-xl">
                             <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Send Message</h4>
                             
-                            <!-- Submit Success Banner -->
+                            <!-- Success Banner -->
                             <div id="contact-success" class="hidden mb-6 p-4 rounded-xl bg-brand-success/15 border border-brand-success text-brand-success-800 text-sm flex items-start space-x-2.5">
                                 <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0 text-brand-success"></i>
                                 <div>
-                                    <p class="font-bold font-sans">Transmission Succeeded</p>
+                                    <p class="font-bold">Transmission Succeeded</p>
                                     <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Our spatial engineering coordinator has received your telemetry request and will respond within 12 hours.</p>
                                 </div>
                             </div>
 
-                            <!-- Submit Error Banner -->
+                            <!-- Error Banner -->
                             <div id="contact-error" class="hidden mb-6 p-4 rounded-xl bg-red-500/15 border border-red-500 text-red-700 text-sm flex items-start space-x-2.5">
                                 <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 text-red-500"></i>
                                 <div>
@@ -1303,7 +1275,7 @@
                                 </div>
                             </div>
 
-                            <!-- Contact Form Element -->
+                            <!-- Form elements -->
                             <form id="ebros-contact-form" class="space-y-5" onsubmit="handleFormSubmission(event)">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                     <div>
@@ -1353,23 +1325,17 @@
                             </form>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
-
     </main>
 
+    <!-- Footer -->
     <footer class="bg-slate-950 text-slate-400 border-t border-slate-900 relative z-10 py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-10">
-            
-            <!-- Column 1: Info and Tagline -->
             <div class="md:col-span-4 space-y-4 text-left">
                 <div id="footer-logo-container" class="flex items-center">
-                    <!-- Footer Logo (Using the white text asset version for dark footer) -->
                     <img id="footer-logo" src="E BROS_LOGO_250X55PX-02.png" alt="Ebros Logo" class="h-10 w-auto object-contain" onerror="showFooterLogoFallback()">
-                    
-                    <!-- Footer Fallback Component -->
                     <div id="footer-logo-fallback" class="hidden flex items-center space-x-2.5">
                         <div class="w-9 h-9 rounded-xl bg-[#FCD34D] flex flex-col justify-center items-center font-bold text-black text-xs font-tech">
                             <span class="leading-none">E</span>
@@ -1394,7 +1360,6 @@
                 </div>
             </div>
 
-            <!-- Column 2: Quick Links -->
             <div class="md:col-span-2 text-left">
                 <h4 class="text-xs font-tech text-white uppercase tracking-widest font-semibold mb-4">Navigation</h4>
                 <ul class="space-y-2.5 text-sm">
@@ -1406,7 +1371,6 @@
                 </ul>
             </div>
 
-            <!-- Column 3: Core Technology Areas -->
             <div class="md:col-span-3 text-left">
                 <h4 class="text-xs font-tech text-white uppercase tracking-widest font-semibold mb-4">Core Technology</h4>
                 <ul class="space-y-2.5 text-sm">
@@ -1418,7 +1382,6 @@
                 </ul>
             </div>
 
-            <!-- Column 4: Location Matrix -->
             <div class="md:col-span-3 text-left">
                 <h4 class="text-xs font-tech text-white uppercase tracking-widest font-semibold mb-4">Location Matrix</h4>
                 <p class="text-sm text-slate-400 leading-relaxed mb-3">
@@ -1430,7 +1393,6 @@
                     <span>Systems Operational (India)</span>
                 </div>
             </div>
-
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600">
@@ -1443,11 +1405,11 @@
         </div>
     </footer>
 
-
+    <!-- Application Script Block -->
     <script>
-        // DOM Loading Event Listener
-        window.onload = function() {
-            // Hide Preloader on system load complete
+        // DOM Hydration Entry Point
+        document.addEventListener('DOMContentLoaded', () => {
+            // Dismiss Preloader
             const preloader = document.getElementById('preloader');
             if (preloader) {
                 preloader.style.opacity = '0';
@@ -1456,51 +1418,36 @@
                 }, 500);
             }
 
-            // Initialize Icons
-            lucide.createIcons();
+            // Initialize Lucide Icons
+            try {
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                console.error("Lucide failed to initialize cleanly:", e);
+            }
 
-            // Setup LiDAR Canvas Interaction
+            // Setup LiDAR Canvas Interactive Node loop
             initLidarCanvas();
 
-            // Run initial routing check
+            // Run initial hash routing evaluation
             handleRouteCheck();
 
-            // Set up Staging Interactive Slider drag
-            initStagingSlider();
-        };
+            // Set up Staging Interactive Drag Sliders
+            initStagingSlider('staging-slider-bar', 'staging-after');
+            initStagingSlider('services-slider-bar', 'services-staging-after');
+        });
 
-        // Error Handlers for Image Loader Resiliency
-        function showLogoFallback() {
-            const lightLogo = document.getElementById('logo-light');
-            const darkLogo = document.getElementById('logo-dark');
-            const fallbackElement = document.getElementById('logo-fallback');
-            
-            if (lightLogo) lightLogo.style.display = 'none';
-            if (darkLogo) darkLogo.style.display = 'none';
-            if (fallbackElement) fallbackElement.classList.remove('hidden');
-        }
-
-        // Handle footer image fallback loading smoothly
-        function showFooterLogoFallback() {
-            const footerImg = document.getElementById('footer-logo');
-            const footerFallback = document.getElementById('footer-logo-fallback');
-            
-            if (footerImg) footerImg.style.display = 'none';
-            if (footerFallback) footerFallback.classList.remove('hidden');
-        }
-
-        // Router Implementation
+        // Single-Page Routing Model
         window.addEventListener('hashchange', handleRouteCheck);
 
         function handleRouteCheck() {
             let hash = window.location.hash.substring(1) || 'home';
-            // Sanitize query properties
             const allowedPages = ['home', 'about', 'services', 'vision', 'contact'];
             if (!allowedPages.includes(hash)) {
                 hash = 'home';
             }
             
-            // Switch active page views
             document.querySelectorAll('.page-view').forEach(view => {
                 view.classList.add('hidden');
             });
@@ -1510,7 +1457,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // Highlight nav anchor headers
+            // Highlight nav anchors
             document.querySelectorAll('[data-nav-link]').forEach(anchor => {
                 const target = anchor.getAttribute('data-nav-link');
                 if (target === hash) {
@@ -1520,7 +1467,7 @@
                 }
             });
 
-            // Highlight Mobile menu elements
+            // Highlight Mobile menu anchors
             document.querySelectorAll('[data-nav-link-mobile]').forEach(anchor => {
                 const target = anchor.getAttribute('data-nav-link-mobile');
                 if (target === hash) {
@@ -1530,19 +1477,16 @@
                 }
             });
 
-            // Hide Mobile dropdown layout on transition
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileMenu) {
                 mobileMenu.classList.add('hidden');
             }
         }
 
-        // Programmatic Navigation Trigger
         function navigateTo(pageId) {
             window.location.hash = pageId;
         }
 
-        // Toggle Mobile Menu Open
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         if (mobileMenuBtn) {
             mobileMenuBtn.addEventListener('click', () => {
@@ -1553,11 +1497,10 @@
             });
         }
 
-        // Theme Engine Configuration
+        // Dark/Light Theme Switching
         const themeToggleBtn = document.getElementById('theme-toggle');
         const themeToggleMobileBtn = document.getElementById('theme-toggle-mobile');
 
-        // Check stored theme state
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -1574,26 +1517,19 @@
             }
         }
 
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', toggleTheme);
-        }
-        if (themeToggleMobileBtn) {
-            themeToggleMobileBtn.addEventListener('click', toggleTheme);
-        }
+        if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+        if (themeToggleMobileBtn) themeToggleMobileBtn.addEventListener('click', toggleTheme);
 
-
-        // Custom interactive particle engine on HTML Canvas to simulate real LiDAR scans
+        // Interactive LiDAR Point Cloud Background canvas
         function initLidarCanvas() {
             const canvas = document.getElementById('lidar-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             
             let particles = [];
-            let connections = [];
-            const particleCount = 65;
-            const linkDistance = 110;
-            
-            let mouse = { x: null, y: null, radius: 180 };
+            const particleCount = 75;
+            const linkDistance = 120;
+            let mouse = { x: null, y: null, radius: 200 };
 
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
@@ -1602,7 +1538,6 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            // Track mouse positions over overlay
             window.addEventListener('mousemove', (e) => {
                 mouse.x = e.clientX;
                 mouse.y = e.clientY;
@@ -1612,7 +1547,6 @@
                 mouse.y = null;
             });
 
-            // Handle touch coordinates
             window.addEventListener('touchmove', (e) => {
                 if (e.touches.length > 0) {
                     mouse.x = e.touches[0].clientX;
@@ -1624,48 +1558,43 @@
                 mouse.y = null;
             });
 
-            // Node class
             class Particle {
                 constructor() {
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
-                    this.vx = (Math.random() - 0.5) * 0.4;
-                    this.vy = (Math.random() - 0.5) * 0.4;
-                    this.radius = Math.random() * 2 + 1;
+                    this.vx = (Math.random() - 0.5) * 0.35;
+                    this.vy = (Math.random() - 0.5) * 0.35;
+                    this.radius = Math.random() * 2.5 + 1;
                 }
 
                 update() {
                     this.x += this.vx;
                     this.y += this.vy;
 
-                    // Bounce vectors off viewport borders
                     if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
                     if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
 
-                    // Mouse gravity pull simulation (LiDAR response loop)
                     if (mouse.x !== null) {
                         const dx = mouse.x - this.x;
                         const dy = mouse.y - this.y;
                         const dist = Math.hypot(dx, dy);
                         if (dist < mouse.radius) {
                             const force = (mouse.radius - dist) / mouse.radius;
-                            this.x -= (dx / dist) * force * 1.2;
-                            this.y -= (dy / dist) * force * 1.2;
+                            this.x -= (dx / dist) * force * 1.5;
+                            this.y -= (dy / dist) * force * 1.5;
                         }
                     }
                 }
 
                 draw() {
-                    // Check if current mode is dark
                     const isDark = document.documentElement.classList.contains('dark');
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = isDark ? 'rgba(56, 189, 248, 0.7)' : 'rgba(37, 99, 235, 0.5)';
+                    ctx.fillStyle = isDark ? 'rgba(56, 189, 248, 0.65)' : 'rgba(37, 99, 235, 0.45)';
                     ctx.fill();
                 }
             }
 
-            // Create Node list
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle());
             }
@@ -1679,7 +1608,6 @@
                     p.draw();
                 });
 
-                // Render connections representing building structure blueprints
                 for (let i = 0; i < particles.length; i++) {
                     for (let j = i + 1; j < particles.length; j++) {
                         const p1 = particles[i];
@@ -1687,25 +1615,23 @@
                         const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
 
                         if (dist < linkDistance) {
-                            const alpha = (1 - (dist / linkDistance)) * 0.15;
+                            const alpha = (1 - (dist / linkDistance)) * 0.18;
                             ctx.beginPath();
                             ctx.moveTo(p1.x, p1.y);
                             ctx.lineTo(p2.x, p2.y);
                             ctx.strokeStyle = isDark ? `rgba(56, 189, 248, ${alpha})` : `rgba(37, 99, 235, ${alpha})`;
-                            ctx.lineWidth = 0.8;
+                            ctx.lineWidth = 0.9;
                             ctx.stroke();
                         }
                     }
                 }
-
                 requestAnimationFrame(animate);
             }
             animate();
         }
 
-
+        // Staging Sandbox Tab Switcher
         function setDemoTab(tabNum) {
-            // Manage active styles of buttons
             document.querySelectorAll('.demo-tab-btn').forEach(btn => {
                 btn.classList.remove('bg-brand-blue', 'text-white');
                 btn.classList.add('text-slate-400', 'hover:bg-slate-800');
@@ -1716,7 +1642,6 @@
                 activeBtn.classList.add('bg-brand-blue', 'text-white');
             }
 
-            // Swapping visibility states of the screens
             document.querySelectorAll('.demo-content').forEach(screen => {
                 screen.classList.add('hidden');
             });
@@ -1726,21 +1651,20 @@
             }
         }
 
-        // Initialize drag slider inside Staging Layout (Tab 2)
-        function initStagingSlider() {
-            const bar = document.getElementById('staging-slider-bar');
-            const afterView = document.getElementById('staging-after');
+        // Universal before/after image staging dragging module logic
+        function initStagingSlider(barId, viewId) {
+            const bar = document.getElementById(barId);
+            const afterView = document.getElementById(viewId);
             if (!bar || !afterView) return;
 
             let isDragging = false;
 
-            // Compute positions
             function moveSlider(clientX) {
                 const container = bar.parentElement;
                 const rect = container.getBoundingClientRect();
+                if (rect.width === 0) return;
+
                 let x = clientX - rect.left;
-                
-                // Keep boundary check
                 if (x < 0) x = 0;
                 if (x > rect.width) x = rect.width;
                 
@@ -1749,7 +1673,6 @@
                 afterView.style.width = percentage + '%';
             }
 
-            // Event Listeners for dragging
             bar.addEventListener('mousedown', () => { isDragging = true; });
             window.addEventListener('mouseup', () => { isDragging = false; });
             window.addEventListener('mousemove', (e) => {
@@ -1757,7 +1680,6 @@
                 moveSlider(e.clientX);
             });
 
-            // Touch events for mobile compatibility
             bar.addEventListener('touchstart', () => { isDragging = true; });
             window.addEventListener('touchend', () => { isDragging = false; });
             window.addEventListener('touchmove', (e) => {
@@ -1768,16 +1690,14 @@
             });
         }
 
-
+        // Intake Form Submissions
         function handleFormSubmission(event) {
             event.preventDefault();
 
-            // Select verification components
             const successBox = document.getElementById('contact-success');
             const errorBox = document.getElementById('contact-error');
             const submitBtn = document.getElementById('form-submit-btn');
 
-            // Collect variables
             const name = document.getElementById('form-name').value.trim();
             const company = document.getElementById('form-company').value.trim();
             const email = document.getElementById('form-email').value.trim();
@@ -1785,40 +1705,29 @@
             const service = document.getElementById('form-service').value;
             const message = document.getElementById('form-message').value.trim();
 
-            // Clear previous layouts
             successBox.classList.add('hidden');
             errorBox.classList.add('hidden');
 
-            // Quick Client Validation check
             if (!name || !company || !email || !phone || !service || !message) {
                 errorBox.classList.remove('hidden');
                 return;
             }
 
-            // Animate submission state changes inside UI
             submitBtn.disabled = true;
             submitBtn.innerHTML = `
                 <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 <span>Syncing Metadata...</span>
             `;
 
-            // Mock Network Transmission Latency
             setTimeout(() => {
-                // Show Success output
                 successBox.classList.remove('hidden');
-                
-                // Reset Fields
                 document.getElementById('ebros-contact-form').reset();
-                
-                // Re-enable validation button
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `
                     <i data-lucide="send" class="w-4.5 h-4.5"></i>
                     <span>Initiate Telemetry Intake</span>
                 `;
                 lucide.createIcons();
-
-                // Scroll cleanly up to feedback banner
                 successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 1800);
         }
